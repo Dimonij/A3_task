@@ -1,8 +1,8 @@
 module A3_task_tb;
 
-localparam DESER_W = 35;
+localparam DESER_W = 47;
 localparam VAL_BITS = ( $clog2( DESER_W ) +1 );
-localparam MAX_DATA = 200;
+localparam MAX_DATA = 450;
 
 // DUT wire
 bit               d_data_i, d_data_val_i;
@@ -33,17 +33,14 @@ input int iter_num;
   for ( int i = 0; i <= iter_num; i++ )
     begin
       wait ( !st_busy_o );
-      @( posedge clk)
-        begin
-          st_data_i = ( $urandom_range ( 420000000, 0 ) );
-          tr_data.put( st_data_i );
-          st_data_mod_i = DESER_W;
-        end  
-  @( posedge clk ) st_data_val_i = 1;
-  @( posedge clk ) st_data_mod_i = 0;
-  test_counter++;
-  #10;
-  end
+      st_data_i = ( $urandom_range ( 420000000, 0 ) );
+      tr_data.put( st_data_i );
+      st_data_mod_i = DESER_W;
+      @( posedge clk ) st_data_val_i = 1;
+      @( posedge clk ) st_data_val_i = 0;
+      test_counter++;
+      wait ( st_busy_o );
+    end
 endtask
 
 task ser_data_recieve;
